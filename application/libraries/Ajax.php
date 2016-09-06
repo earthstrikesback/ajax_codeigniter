@@ -58,9 +58,13 @@ class Ajax
                         });
 		}
                 function ajaxShow(ss){
-                    $.post(\''.current_url().'\', { ajax_request: ss, ajax_hide: false }, function(data) {
-                       $(\'#\'+ss).html(data);
-                        });
+                
+                        $(\'#\'+ss).html('.$this->_ajaxload.');
+			
+                        $.post(\''.current_url().'\', { ajax_request: ss, ajax_hide: false
+                            }, function(data) {
+                            $(\'#\'+ss).html(data);
+                             });
 		}
 
 
@@ -68,20 +72,33 @@ class Ajax
 ';
 	}
 	
+         public function ajax_run_onload($id, $s=false){
+            if($s){ $s='true';}
+            else{ $s='false';}
+             $_h=<<<HTML
+        <script>
+        function load(){ ajaxPlace('{$id}',{$s});}
+                window[ addEventListener ? 'addEventListener' : 'attachEvent' ]( addEventListener ? 'load' : 'onload', load )
+        </script>
+HTML;
+          $this->_head.=$_h;   
+
+                     
+        }
 
         
 	public function ajax_timer_event($id, $time, $s=false){
             if($s){ $s='true';}
             else{ $s='false';}
             $_h=<<<HTML
-	<script>
+        <script>
 	function Timer{$id}(){
 		setTimeout("ajaxPlace('{$id}', {$s});Timer{$id}()", {$time});
 	}
 	Timer{$id}();
 	</script>
 HTML;
-		$this->_head.=$_h;
+            $this->_head.=$_h;
 	}
 	
 	public function ajax_get_panel($id){
@@ -137,7 +154,10 @@ HTML;
             }
             return($match);
         }
- 
+        
+        public function check_show_panel_data($id){
+            return( (!$this->check_hide_source($id)) && ($this->check_refresh_source($id)) );
+        }    
 	
 	public function ajax_refresh_link($id, $load=false){
       
@@ -155,6 +175,8 @@ HTML;
             }    
            
 	}
+        
+       
         
        
 }
