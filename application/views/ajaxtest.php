@@ -20,9 +20,12 @@
     
 <h3>datetime</h3>    
     {date-time}        
-
     <hr>
 
+<h3>datetime 2: start stop timer</h3>    
+    {date-time2}        
+    <hr>
+    
 
 </body>
 </html>
