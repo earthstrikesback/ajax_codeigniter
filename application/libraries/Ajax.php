@@ -21,35 +21,24 @@ class Ajax
 	private $_head;
 
 	public function __construct(){
-            $BOOTSTRAP = false;
             $this->DEBUG                = FALSE;
-            
-            $this->icon['hide']         = "hide";
-            $this->icon['show']         = "show";
-            $this->icon['refresh']      = "refresh";
-            $this->icon['start']        = "start";
-            $this->icon['stop']         = "stop";
-            $this->icon['clear']        = "clear";
-            $this->_ajaxload            = "'loading'";
-        
-            if($BOOTSTRAP){
-                $this->icon['hide']     = "<span class='glyphicon glyphicon-resize-small' aria-hidden='true'></span>";
-                $this->icon['show']     = "<span class='glyphicon glyphicon-resize-full' aria-hidden='true'></span>";
-                $this->icon['loading']  = "<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate' aria-hidden='true'></span>";
-                $this->icon['refresh']  = "<span class='glyphicon glyphicon-refresh' aria-hidden='true'></span>";
-                $this->icon['start']    = "<span class='glyphicon glyphicon-play' aria-hidden='true'></span>";
-                $this->icon['stop']     = "<span class='glyphicon glyphicon-pause' aria-hidden='true'></span>";
-                $this->icon['clear']    = "<span class='glyphicon glyphicon-erase' aria-hidden='true'></span>";
+               
+          
+            $this->icon['hide']     = "<span class='glyphicon glyphicon-resize-small' aria-hidden='true' aria-label='hide'></span><span class='sr-only'>hide</span>";
+            $this->icon['show']     = "<span class='glyphicon glyphicon-resize-full' aria-hidden='true' aria-label='show'></span><span class='sr-only'>show</span>";
+            $this->icon['loading']  = "<span class='glyphicon glyphicon-refresh glyphicon-refresh-animate' aria-hidden='true' aria-label='loading'></span><span class='sr-only'>loading</span>";
+            $this->icon['refresh']  = "<span class='glyphicon glyphicon-refresh' aria-hidden='true' aria-label='refresh'></span><span class='sr-only'>refresh</span>";
+            $this->icon['start']    = "<span class='glyphicon glyphicon-play' aria-hidden='true' aria-label='start'></span><span class='sr-only'>start</span>";
+            $this->icon['stop']     = "<span class='glyphicon glyphicon-pause' aria-hidden='true' aria-label='stop'></span><span class='sr-only'>stop</span>";
+            $this->icon['clear']    = "<span class='glyphicon glyphicon-erase' aria-hidden='true' aria-label='clear'></span><span class='sr-only'>clear</span>";
                 
-      
-                
-                $this->_ajaxload = "'<div class=\"panel panel-default\"><div class=\"panel-heading\">loading...</div>"
+           
+            $this->_ajaxload = "'<div class=\"panel panel-default\"><div class=\"panel-heading\">loading...</div>"
                         . "<div class=\"panel-body\"><center>"
                         . "<span class=\"glyphicon glyphicon-refresh glyphicon-refresh-animate\" aria-hidden=\"true\"></span>"
                         . "</center></div></div>'";
-            }    
                 
-                $this->_head='
+            $this->_head='
 	<script>
                                               
                 function ajaxSendRequest(source,requestname,showimage){
@@ -108,7 +97,7 @@ HTML;
             return($this->ajax_timer_event($id, 0, false));
 	}
         
-         /*
+        /*
         /*  ajax_timer_event
         /**********************************************************************/
         
@@ -131,6 +120,22 @@ HTML;
              return $this->_body[$id]=$body;
     	}
         
+        /**********************************************************************/
+        /*  sendrequest
+        **/
+        
+        public function ajax_link_sendrequest($id,$request,$linktext,$show_image){
+               return '<a href="javascript:ajaxSendRequest(\''.$id.'\',\''.$request.'\', '. $show_image. ')">'.$linktext.'</a>';
+	}
+        
+        public function ajax_link_place($id,$linktext,$show_image){
+               return '<a href="javascript:ajaxPlace(\''.$id.'\', '. $show_image. ')">'.$linktext.'</a>';
+	}
+        
+        /**********************************************************************/
+        /*  check_request ajax
+        **/
+        
         public function check_request(){
             return(isset($_POST['ajax_request']));
         }
@@ -145,7 +150,7 @@ HTML;
             return($match);
          }
  
-        public function check_refresh_source($id){
+        public function check_request_source($id){
             $match=false;
             if($this->check_request()){
                 if($id === $_POST['ajax_request']){ $match=true;}
@@ -154,8 +159,9 @@ HTML;
         }
         
         public function check_load_panel($id){
-            return($this->check_request() == false)||($this->check_refresh_source($id));
+            return($this->check_request() == false)||($this->check_request_source($id));
         }
+        
         
         /**********************************************************************
         *  ajax_hide
@@ -181,7 +187,7 @@ HTML;
         
         public function set_hide_source($id){
             $set=false;
-            if(($this->check_refresh_source($id)) && (isset($_POST['request_name'])) ){
+            if(($this->check_request_source($id)) && (isset($_POST['request_name'])) ){
                 if(($_POST['request_name']=='ajax_hide')){ 
                     $_SESSION[$id]=$id;
                     $set=true;
@@ -236,7 +242,7 @@ HTML;
         /**********************************************************************/
         
         public function check_show_panel_data($id){
-            return( (!$this->check_hide_source($id)) && ($this->check_refresh_source($id)) );
+            return( (!$this->check_hide_source($id)) && ($this->check_request_source($id)) );
         }    
 	
 	public function ajax_refresh_link($id, $show_image=false){
@@ -251,13 +257,7 @@ HTML;
             return($this->check_request_name('clear'));
         }
         
-        public function ajax_link_sendrequest($id,$request,$linktext,$show_image){
-               return '<a href="javascript:ajaxSendRequest(\''.$id.'\',\''.$request.'\', '. $show_image. ')">'.$linktext.'</a>';
-	}
         
-        public function ajax_link_place($id,$linktext,$show_image){
-               return '<a href="javascript:ajaxPlace(\''.$id.'\', '. $show_image. ')">'.$linktext.'</a>';
-	}
         
         /**
         *  DEBUG FUNCTION
